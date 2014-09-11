@@ -1,6 +1,6 @@
 # web-deployer
 
-A simple way to `git pull &amp;&amp; ./deploy.sh` from a webhook  
+A simple way to `git pull && ./deploy.sh` from a webhook  
 Open up app.py to see how things work!  
 
 ## Installation
