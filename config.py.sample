@@ -1,0 +1,16 @@
+TZ = 'Australia/Sydney'
+DEBUG = True
+MONGO_URI = "mongodb://localhost/reloader"
+PORT = 5010
+HOSTNAME = '0.0.0.0'
+
+
+# Filter IPs based on the remote_addr.startswith (TODO: use github secret key verification for better security)
+ALLOWED_RANGES = [
+    # Github
+    '192.30.252',
+    '2620:112:3000',
+
+    # Bitbucket
+    '131.103.20',
+]
