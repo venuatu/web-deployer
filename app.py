@@ -64,4 +64,4 @@ def push(name):
     }), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5010)
+    app.run(host=app.config.get('HOSTNAME', '0.0.0.0'), port=app.config.get('PORT', 5010))
