@@ -31,6 +31,14 @@ Done!
 
 If you would like to see the deployment results see `db.deploys.find()` in the mongo shell
 
+### ./deploy.sh
+
+This script in the target repo is responsible for running tests, setting up the project and notifying team members
+
+### restarting service
+
+The target utility must have a upstart job / init script that works with `service {NAME} restart` after a successful deploy
+
 ## LICENSE
 
 MIT
