@@ -1,7 +1,7 @@
 from __future__ import print_function
 from flask import Flask, jsonify, request
 from flask.ext.pymongo import PyMongo
-from sh import git, sh, ErrorReturnCode
+from sh import git, sh, sudo, ErrorReturnCode
 import config, os, sys
 
 app = Flask(__name__)
@@ -41,23 +41,17 @@ def push(name):
             err = str(e)
             print('weird error', err)
 
-        mongo.db.deploys.insert({
+        output = {
             'site': name,
             'git_revs': [rev, after_rev],
             'git_output': git_output,
             'deploy': deploy,
             'restart': restart,
             'err': err,
-        })
+        }
+        mongo.db.deploys.insert(output)
 
-        return jsonify({
-            'status': 'new_rev',
-            'git_revs': [rev, after_rev],
-            'git_output': git_output,
-            'deploy': deploy,
-            'restart': restart,
-            'err': err,
-        }), 201
+        return jsonify(output), 201
     return jsonify({
         'status': 'same',
         'rev': rev or '...',
