@@ -20,6 +20,7 @@ Mongo collections:
 
 @app.route('/push/<name>', methods=['POST'])
 def push(name):
+    # a terrible CIDR check
     if not any([request.remote_addr.startswith(x) for x in ALLOWED_RANGES]):
         return jsonify({'status': 'access denied'}), 401
 
@@ -28,13 +29,13 @@ def push(name):
         return jsonify({'status': 'invalid repo spec'}), 404
 
     rev = str(git('rev-parse', 'origin/master', _cwd=site['path']))
-    git.fetch(_cwd=site['path'])
+    sudo.git.fetch(_cwd=site['path'])
     after_rev = str(git('rev-parse', 'origin/master', _cwd=site['path']))
 
     if rev != after_rev:
-        git_output, deploy, err = [''] * 3
+        git_output, deploy, restart, err = [''] * 4
         try:
-            git_output = str(git.pull(_cwd=site['path'])).strip()
+            git_output = str(sudo.git.pull(_cwd=site['path'])).strip()
             deploy = str(sh('./deploy.sh', _cwd=site['path'])).strip()
             restart = str(sudo('service', name, 'restart'))
         except ErrorReturnCode as e:
@@ -50,6 +51,7 @@ def push(name):
             'err': err,
         }
         mongo.db.deploys.insert(output)
+        output['_id'] = str(output['_id'])
 
         return jsonify(output), 201
     return jsonify({
@@ -59,3 +61,4 @@ def push(name):
 
 if __name__ == '__main__':
     app.run(host=app.config.get('HOSTNAME', '0.0.0.0'), port=app.config.get('PORT', 5010))
+
